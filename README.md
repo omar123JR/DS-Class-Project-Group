@@ -1,14 +1,33 @@
-# Bank Marketing ML
+# Bank Marketing Subscription Prediction
 
-**An end-to-end data science project using the UCI Bank Marketing dataset to explore customer campaigns and predict term-deposit subscriptions.** The notebook covers exploratory analysis, data preparation, feature pipelines, and a comparison of logistic regression and random forest models.
+**A practical data-science project exploring how historical bank campaign data can help identify clients who may subscribe to a term deposit.** The notebook covers exploratory analysis, feature preparation, and a comparison of logistic regression and random forest on an imbalanced classification problem.
 
-[Open the notebook](bank_marketing_project.ipynb) · [View the presentation](https://www.canva.com/design/DAG80w25nWk/yRy2_kMG-sbzizxxhf9C-A/view?utm_content=DAG80w25nWk&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8d16597c7a) · [Open in Google Colab](https://colab.research.google.com/drive/1KeQcz1L9QXra-GVRTcy8cWQCwmeInPSM?usp=sharing)
+[Open the notebook](bank_marketing_project.ipynb) · [Open the notebook in Colab](https://colab.research.google.com/github/omar123JR/DS-Class-Project-Group/blob/main/bank_marketing_project.ipynb) · [View the presentation](https://www.canva.com/design/DAG80w25nWk/yRy2_kMG-sbzizxxhf9C-A/view?utm_content=DAG80w25nWk&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8d16597c7a)
 
-> **Educational project only.** The analysis is for coursework and should not be used as the sole basis for real-world marketing, customer, or financial decisions.
+> **Educational project.** The analysis is not a validated marketing system and should not be used as the sole basis for customer or financial decisions.
 
-## What is inside?
+## The question
 
-The notebook explores the data and target distribution, checks missing values, duplicates, and outliers, prepares numerical and categorical features with scikit-learn, then trains and evaluates two classifiers. The repository also includes the CSV required by the notebook, the PowerPoint presentation, and the course assignment brief.
+Can information available about a client and previous campaign interactions help identify clients who subscribe to a term deposit? The target, `y`, records whether the client subscribed (`yes`) or did not (`no`). The practical challenge is class imbalance: only 11.70% of records are positive.
+
+## What the project demonstrates
+
+The notebook explores a real-world tabular dataset, checks data quality, and compares two classification approaches. It uses scikit-learn preprocessing pipelines to scale numeric features and encode categorical features, and evaluates the models with class-level precision, recall, and F1 rather than relying on accuracy alone.
+
+## Results from the saved test run
+
+The stratified test set contains 9,043 records: 7,985 `no` cases and 1,058 `yes` cases.
+
+- **Logistic regression:** 89.33% accuracy. For the `yes` class, precision is 66%, recall is 18%, and F1 is 28%. Weighted F1 is 87%.
+- **Random forest:** 81.71% accuracy. For `yes`, precision is 34%, recall is 61%, and F1 is 44%. Weighted F1 is 84%.
+
+The results show a useful trade-off in this split. Logistic regression has higher overall accuracy and higher precision among its positive predictions. The class-weighted random forest finds more subscribers, but its lower precision means more of its positive predictions are incorrect. The preferred model depends on the relative cost of missing a potential subscriber versus making an unnecessary follow-up call. These are saved results from one held-out split, not evidence of performance on future campaigns.
+
+## Methodology
+
+The included `bank-full.csv` has 45,211 records and 17 columns: 16 input features and the target. The notebook uses a stratified 80/20 train/test split with `random_state=42`. Numeric features are scaled with `StandardScaler`; categorical features are one-hot encoded with `OneHotEncoder`. Both transformations are combined with the estimators in a scikit-learn `ColumnTransformer` and `Pipeline`.
+
+The models are logistic regression and a random forest with 100 trees, maximum depth 10, and balanced class weights. The notebook excludes `duration` from the predictors. Because call duration is only known after a client has been contacted, excluding it is appropriate when the intended use is to prioritize clients before making a call.
 
 ## Run the notebook
 
@@ -21,42 +40,35 @@ python -m pip install -r requirements.txt
 jupyter notebook bank_marketing_project.ipynb
 ```
 
-The notebook reads `bank-full.csv` from the repository root. The CSV is included and uses semicolon delimiters. Run the analysis and model cells in order. In Google Colab, upload both the notebook and CSV to the same session, or clone this repository before running the notebook.
+The notebook reads `bank-full.csv` from the repository root. The included CSV uses semicolon delimiters. In Colab, open the notebook using the link above and ensure the CSV is available in the runtime before running the cells.
 
-## Methodology
+## Dataset and attribution
 
-The included `bank-full.csv` contains 45,211 records and 17 columns: 16 input features and the target `y`. The notebook uses a stratified 80/20 train/test split with `random_state=42`, which yields 9,043 test records in the saved run. It excludes `duration` from the selected numeric predictors.
+The project uses the `bank-full.csv` variant of the UCI Bank Marketing dataset. It describes phone-based campaigns from a Portuguese banking institution. The target `y` indicates whether a client subscribed to a term deposit. The included file contains no blank missing fields; values such as `unknown` are retained as categories.
 
-Numerical features are scaled with `StandardScaler`, while categorical features are one-hot encoded with `OneHotEncoder`. The transformations are combined with model fitting in a scikit-learn `ColumnTransformer` and `Pipeline`. The models are logistic regression and a random forest with 100 trees, maximum depth 10, and `class_weight="balanced"`.
+Moro, S., Rita, P., & Cortez, P. (2014). *Bank Marketing* [Dataset]. UCI Machine Learning Repository. [https://doi.org/10.24432/C5K306](https://doi.org/10.24432/C5K306). The dataset is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
 
-## Results in the saved notebook
+## Project files
 
-The test set has 7,985 `no` cases and 1,058 `yes` cases. For logistic regression, the saved classification report shows **89.33% accuracy**. For the `yes` class it reports **66% precision, 18% recall, and 28% F1**; weighted F1 is **87%**.
+- [`bank_marketing_project.ipynb`](bank_marketing_project.ipynb) — analysis, preprocessing, model training, and evaluation.
+- [`bank-full.csv`](bank-full.csv) — dataset used by the notebook.
+- [`presentation.pptx`](presentation.pptx) — project presentation; also available through the Canva link above.
+- [`docs/course_assignment.pdf`](docs/course_assignment.pdf) — course project requirements.
+- [`requirements.txt`](requirements.txt) — Python dependencies.
 
-For the random forest, the saved report shows **81.71% accuracy**. For the `yes` class it reports **34% precision, 61% recall, and 44% F1**; weighted F1 is **84%**. These outputs show a trade-off on this test split: logistic regression has higher overall accuracy, while the class-weighted random forest finds more subscribers. The target is imbalanced: 39,922 records are `no` (88.30%) and 5,289 are `yes` (11.70%), so accuracy alone is not a sufficient model-selection measure.
+## Limitations and reproducibility notes
 
-## Reproducibility notes
+- The notebook's saved ROC/AUC cell did not complete (`NameError: y_test is not defined`). Its code also calls `roc_auc_score` without importing it. No AUC value is reported here; that cell needs to be fixed and rerun before ROC/AUC results can be cited.
+- The final test cell imports a course helper named `testcases`, but `testcases.py` is not included in the repository. That cell requires the instructor-provided helper.
+- The cleaning narrative says outliers were capped with Winsorization, while the executable cells detect and retain them. Align the narrative and implementation before presenting that step as completed.
+- The reported model metrics come from one test split. Further validation across splits or later campaign data would be needed before using the model operationally.
 
-The saved ROC/AUC analysis cell did not complete: its stored output is `NameError: y_test is not defined`. In addition, the cell's code calls `roc_auc_score` without importing it. Therefore this README does not report numeric AUC results, and the ROC/AUC cell needs correction and a successful rerun before those results can be cited.
+## Presentation and contributors
 
-The notebook's cleaning narrative says outliers were capped with Winsorization, but its executable cells detect outliers and keep them. Also, the final test cell imports `testcases`, but the required `testcases.py` helper is not included in this repository. Provide the course helper to run that cell. The reported model metrics are the saved outputs; re-run the successful model cells to regenerate them in your environment.
+The presentation is available as [`presentation.pptx`](presentation.pptx), in the [Canva viewer](https://www.canva.com/design/DAG80w25nWk/yRy2_kMG-sbzizxxhf9C-A/view?utm_content=DAG80w25nWk&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h8d16597c7a), and through the [Google Colab notebook](https://colab.research.google.com/github/omar123JR/DS-Class-Project-Group/blob/main/bank_marketing_project.ipynb).
 
-## Dataset
+**Contributors:** Omar Aljerbi, Faraj Alarabi, Abd Albari Abd Alsamad, and Ali Bie.
 
-This is the UCI `bank-full.csv` variant of the Bank Marketing dataset, based on phone campaigns of a Portuguese banking institution. Its target `y` indicates whether a client subscribed to a term deposit. The UCI page describes 16 input features and the target, for 17 columns in total. The included dataset has no missing fields.
+## License
 
-**Citation:** Moro, S., Rita, P., & Cortez, P. (2014). *Bank Marketing* [Dataset]. UCI Machine Learning Repository. [https://doi.org/10.24432/C5K306](https://doi.org/10.24432/C5K306).
-
-The UCI dataset is licensed under [Creative Commons Attribution 4.0 International](https://creativecommons.org/licenses/by/4.0/). This dataset license is separate from the license for the project's original code and presentation.
-
-## Presentation and assignment
-
-The PowerPoint file is available as [`presentation.pptx`](presentation.pptx), and the assignment requirements are in [`docs/course_assignment.pdf`](docs/course_assignment.pdf). The presentation can also be viewed through the Canva link at the top of this page.
-
-## Contributors
-
-Omar Aljerbi, Faraj Alarabi, Abd Albari Abd Alsamad, and Ali Bie.
-
-## Project license
-
-No license has yet been assigned to the project's original code or presentation. The UCI dataset is separately licensed under CC BY 4.0, as noted above. A project license should be added only with the contributors' approval and should not be assumed to cover the UCI dataset.
+The UCI dataset is licensed under CC BY 4.0. No separate license has been added for the project's original code or presentation.
